@@ -1,0 +1,1 @@
+читай plan\prompt_tochka_vkhoda.md
