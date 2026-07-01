@@ -42,12 +42,61 @@ body {
   padding: 1rem;
 }
 
+/* Поиск */
+
+.search-wrap { margin-bottom: 1rem; }
+
+#search {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+}
+
+#search:focus {
+  outline: 2px solid var(--accent);
+  border-color: transparent;
+}
+
+/* Оглавление */
+
+.toc {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.toc h2 { margin: 0.25rem 0 0.5rem; font-size: 1.1rem; }
+.toc h3 { margin: 0.75rem 0 0.25rem; font-size: 0.95rem; }
+
+.toc-list {
+  margin: 0;
+  padding-left: 1.4rem;
+  font-size: 0.92rem;
+}
+
+.toc-list a { color: var(--accent); text-decoration: none; }
+.toc-list a:hover { text-decoration: underline; }
+
+/* Блоки и карточки */
+
+.block-title {
+  font-size: 1.2rem;
+  margin: 1.75rem 0 0.75rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid var(--accent);
+}
+
 .formula-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 10px;
   padding: 1rem;
   margin-bottom: 1rem;
+  scroll-margin-top: 1rem;   /* чтобы якорь из оглавления не прилипал к краю */
 }
 
 .formula-card h3 {
@@ -55,17 +104,76 @@ body {
   font-size: 1.05rem;
 }
 
-.formula-card .page-ref {
+.formula-card h4 {
+  margin: 0.9rem 0 0.35rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.page-ref {
   color: var(--muted);
   font-size: 0.85rem;
   font-weight: normal;
 }
+
+.formula-wrap { position: relative; }
 
 .formula-display {
   background: var(--formula-bg);
   border-radius: 8px;
   padding: 0.75rem 0.5rem;
   overflow-x: auto;   /* длинные формулы скроллятся, не ломают вёрстку */
+}
+
+.copy-btn {
+  margin-top: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.78rem;
+  color: var(--accent);
+  background: none;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.copy-btn:hover { border-color: var(--accent); }
+
+.discovered { margin: 0.75rem 0 0; font-size: 0.92rem; }
+.discovered .note { color: var(--muted); }
+
+/* Параметры: символ + расшифровка */
+
+.params {
+  margin: 0;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.3rem 0.8rem;
+  font-size: 0.92rem;
+}
+
+.params dt {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.params dd { margin: 0; }
+
+.description { margin: 0; font-size: 0.95rem; }
+
+.examples {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 0.92rem;
+}
+
+.examples li { margin-bottom: 0.3rem; }
+
+#empty-state {
+  text-align: center;
+  color: var(--muted);
+  padding: 2rem 0;
 }
 
 .site-footer {
