@@ -47,6 +47,25 @@ function buildCard(f) {
   formulaWrap.appendChild(copyBtn);
   card.appendChild(formulaWrap);
 
+  // Вывод формулы (только у формул с полем derivation), свёрнут по умолчанию
+  if (f.derivation && f.derivation.length) {
+    const details = document.createElement("details");
+    details.className = "derivation";
+    const summary = el("summary", null, "Как выводится");
+    details.appendChild(summary);
+    const steps = el("ol", "derivation-steps");
+    for (const step of f.derivation) {
+      const li = el("li");
+      const stepTex = el("div", "derivation-latex");
+      tex(stepTex, step.latex, true);
+      li.appendChild(stepTex);
+      li.appendChild(el("p", "derivation-comment", step.comment));
+      steps.appendChild(li);
+    }
+    details.appendChild(steps);
+    card.appendChild(details);
+  }
+
   // Год и автор
   const meta = el("p", "discovered");
   meta.append(el("strong", null, "Кто и когда: "));
