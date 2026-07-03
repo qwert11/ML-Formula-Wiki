@@ -1,11 +1,13 @@
 // Дополнение к data/formulas.js: формулы со страницы 80.
 // Подключается после основного массива FORMULAS и до app.js.
+// Дробные order 16.1–16.3 ставят карточки сразу после «Производной сигмоиды»
+// (order 16, стр. 80); при перенумерации основного массива сдвигать и их.
 
 FORMULAS.push(
   {
     id: "log-likelihood-partial-weight",
     block: "B",
-    order: 10.1,
+    order: 16.1,
     page: 80,
     chapter: "Глава 3",
 
@@ -52,7 +54,7 @@ FORMULAS.push(
   {
     id: "sigmoid-chain-weight",
     block: "B",
-    order: 10.2,
+    order: 16.2,
     page: 80,
     chapter: "Глава 3",
 
@@ -96,7 +98,7 @@ FORMULAS.push(
   {
     id: "logistic-gradient-component",
     block: "B",
-    order: 10.3,
+    order: 16.3,
     page: 80,
     chapter: "Глава 3",
 
