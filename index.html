@@ -45,5 +45,30 @@
   <footer class="site-footer">
     <p>Источник: Себастьян Рашка, «Python и машинное обучение». Здесь только формулы и авторские описания.</p>
   </footer>
+
+  <script>
+    (() => {
+      const toggle = document.getElementById("theme-toggle");
+      const icon = toggle.querySelector(".theme-icon");
+      const label = toggle.querySelector(".theme-label");
+
+      const refreshButton = () => {
+        const isDark = document.documentElement.dataset.theme === "dark";
+        icon.textContent = isDark ? "☀️" : "🌙";
+        label.textContent = isDark ? "Светлая" : "Тёмная";
+        toggle.setAttribute("aria-label", isDark ? "Включить светлую тему" : "Включить тёмную тему");
+        toggle.title = isDark ? "Включить светлую тему" : "Включить тёмную тему";
+      };
+
+      refreshButton();
+
+      toggle.addEventListener("click", () => {
+        const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+        document.documentElement.dataset.theme = nextTheme;
+        localStorage.setItem("theme", nextTheme);
+        refreshButton();
+      });
+    })();
+  </script>
 </body>
 </html>
