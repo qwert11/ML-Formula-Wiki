@@ -76,35 +76,76 @@ function buildCard(f) {
     card.appendChild(details);
   }
 
-  // Числовой пример есть у каждой формулы и свёрнут по умолчанию.
+  // Разобранный пример — главная поясняющая часть каждой карточки.
   const example = WORKED_EXAMPLES[f.id];
   if (example) {
     const details = document.createElement("details");
     details.className = "worked-example";
-    details.appendChild(el("summary", null, "Пример на простых числах"));
+    details.appendChild(el("summary", null, "Разобранный пример"));
 
     const content = el("div", "worked-example-content");
-    const situation = el("p", "worked-example-question");
-    situation.appendChild(el("strong", null, "Ситуация: "));
-    situation.appendChild(document.createTextNode(example.question));
-    content.appendChild(situation);
+    content.appendChild(el("h5", null, "1. Реальная задача"));
+    content.appendChild(el("p", "worked-example-question", example.question));
+
+    content.appendChild(el("h5", null, "2. Что нужно найти"));
+    content.appendChild(el("p", null, example.goal || ("Вычислить значение формулы «" + f.name + "» для данных из задачи.")));
 
     if (example.hint) {
-      const hint = el("p", "worked-example-hint");
-      hint.appendChild(el("strong", null, "Что означают числа: "));
-      hint.appendChild(document.createTextNode(example.hint));
-      content.appendChild(hint);
+      content.appendChild(el("p", "worked-example-hint", example.hint));
     }
 
-    content.appendChild(el("p", "worked-example-label", "Подставляем числа в формулу:"));
-    const calculation = el("div", "worked-example-calculation");
-    tex(calculation, example.calculation, true);
-    content.appendChild(calculation);
+    content.appendChild(el("h5", null, "3. Связываем условие с обозначениями"));
+    if (example.values && example.values.length) {
+      const values = el("dl", "worked-example-values");
+      for (const value of example.values) {
+        const dt = el("dt");
+        tex(dt, value.symbol, false);
+        const dd = el("dd");
+        dd.appendChild(el("strong", null, value.value + " — "));
+        dd.appendChild(document.createTextNode(value.meaning));
+        values.append(dt, dd);
+      }
+      content.appendChild(values);
+    } else {
+      const values = el("dl", "worked-example-values worked-example-values-general");
+      for (const param of f.params) {
+        const dt = el("dt");
+        tex(dt, param.symbol, false);
+        values.append(dt, el("dd", null, param.desc));
+      }
+      content.appendChild(values);
+    }
 
+    content.appendChild(el("h5", null, "4. Исходная формула"));
+    const sourceFormula = el("div", "worked-example-formula");
+    tex(sourceFormula, f.latex, true);
+    content.appendChild(sourceFormula);
+
+    content.appendChild(el("h5", null, "5. Подставляем и считаем по шагам"));
+    if (example.steps && example.steps.length) {
+      const steps = el("ol", "worked-example-steps");
+      for (const step of example.steps) {
+        const li = el("li");
+        const calculation = el("div", "worked-example-calculation");
+        tex(calculation, step.latex, true);
+        li.appendChild(calculation);
+        li.appendChild(el("p", "worked-example-step-comment", step.comment));
+        steps.appendChild(li);
+      }
+      content.appendChild(steps);
+    } else {
+      const calculation = el("div", "worked-example-calculation");
+      tex(calculation, example.calculation, true);
+      content.appendChild(calculation);
+    }
+
+    content.appendChild(el("h5", null, "6. Смысл результата"));
     const answer = el("p", "worked-example-answer");
-    answer.appendChild(el("strong", null, "Простыми словами: "));
     answer.appendChild(document.createTextNode(example.answer));
     content.appendChild(answer);
+
+    content.appendChild(el("h5", null, "7. Где это применяется"));
+    content.appendChild(el("p", "worked-example-application", example.application || f.examples[0]));
     details.appendChild(content);
     card.appendChild(details);
   }

@@ -241,10 +241,17 @@ input { font: inherit; }
 
 .worked-example-content { font-size: 0.9rem; }
 
+.worked-example-content h5 {
+  margin: 0.85rem 0 0.3rem;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
 .worked-example-question,
 .worked-example-hint,
-.worked-example-label,
-.worked-example-answer { margin: 0.35rem 0; }
+.worked-example-answer,
+.worked-example-application,
+.worked-example-step-comment { margin: 0.35rem 0; }
 
 .worked-example-hint {
   padding: 0.5rem 0.6rem;
@@ -252,21 +259,41 @@ input { font: inherit; }
   background: var(--button-hover);
 }
 
-.worked-example-label {
-  color: var(--muted);
-  font-size: 0.85rem;
+.worked-example-values {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.35rem 0.7rem;
+  margin: 0.4rem 0;
+  padding: 0.55rem 0.65rem;
+  border-radius: 6px;
+  background: var(--button-hover);
 }
 
+.worked-example-values dt { text-align: right; }
+.worked-example-values dd { margin: 0; }
+
+.worked-example-formula,
 .worked-example-calculation {
-  margin: 0.45rem 0;
-  padding: 0.5rem;
   overflow-x: auto;
   border-radius: 6px;
   background: var(--formula-bg);
 }
 
-.worked-example-answer { color: var(--muted); }
-.worked-example-answer strong { color: var(--text); }
+.worked-example-formula { padding: 0.65rem 0.5rem; }
+
+.worked-example-calculation {
+  margin: 0.45rem 0;
+  padding: 0.5rem;
+}
+
+.worked-example-steps {
+  margin: 0;
+  padding-left: 1.4rem;
+}
+
+.worked-example-steps li { margin-bottom: 0.7rem; }
+.worked-example-step-comment { color: var(--muted); }
+.worked-example-answer { font-weight: 500; }
 
 .discovered { margin: 0.75rem 0 0; font-size: 0.92rem; }
 .discovered .note { color: var(--muted); }
