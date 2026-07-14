@@ -201,7 +201,8 @@ input { font: inherit; }
 
 /* Вывод формулы (свёрнут по умолчанию) */
 
-.derivation {
+.derivation,
+.worked-example {
   margin-top: 0.6rem;
   border: 1px solid var(--card-border);
   border-radius: 8px;
@@ -209,14 +210,16 @@ input { font: inherit; }
   background: var(--surface-bg);
 }
 
-.derivation summary {
+.derivation summary,
+.worked-example summary {
   cursor: pointer;
   font-size: 0.88rem;
   color: var(--accent);
   user-select: none;
 }
 
-.derivation[open] summary { margin-bottom: 0.5rem; }
+.derivation[open] summary,
+.worked-example[open] summary { margin-bottom: 0.5rem; }
 
 .derivation-steps {
   margin: 0;
@@ -235,6 +238,22 @@ input { font: inherit; }
   margin: 0.15rem 0 0;
   color: var(--muted);
 }
+
+.worked-example-content { font-size: 0.9rem; }
+
+.worked-example-question,
+.worked-example-answer { margin: 0.35rem 0; }
+
+.worked-example-calculation {
+  margin: 0.45rem 0;
+  padding: 0.5rem;
+  overflow-x: auto;
+  border-radius: 6px;
+  background: var(--formula-bg);
+}
+
+.worked-example-answer { color: var(--muted); }
+.worked-example-answer strong { color: var(--text); }
 
 .discovered { margin: 0.75rem 0 0; font-size: 0.92rem; }
 .discovered .note { color: var(--muted); }

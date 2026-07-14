@@ -76,6 +76,27 @@ function buildCard(f) {
     card.appendChild(details);
   }
 
+  // Числовой пример есть у каждой формулы и свёрнут по умолчанию.
+  const example = WORKED_EXAMPLES[f.id];
+  if (example) {
+    const details = document.createElement("details");
+    details.className = "worked-example";
+    details.appendChild(el("summary", null, "Пример расчёта"));
+
+    const content = el("div", "worked-example-content");
+    content.appendChild(el("p", "worked-example-question", example.question));
+    const calculation = el("div", "worked-example-calculation");
+    tex(calculation, example.calculation, true);
+    content.appendChild(calculation);
+
+    const answer = el("p", "worked-example-answer");
+    answer.appendChild(el("strong", null, "Ответ: "));
+    answer.appendChild(document.createTextNode(example.answer));
+    content.appendChild(answer);
+    details.appendChild(content);
+    card.appendChild(details);
+  }
+
   // Год и автор
   const meta = el("p", "discovered");
   meta.append(el("strong", null, "Кто и когда: "));
