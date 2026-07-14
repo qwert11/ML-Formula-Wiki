@@ -81,16 +81,28 @@ function buildCard(f) {
   if (example) {
     const details = document.createElement("details");
     details.className = "worked-example";
-    details.appendChild(el("summary", null, "Пример расчёта"));
+    details.appendChild(el("summary", null, "Пример на простых числах"));
 
     const content = el("div", "worked-example-content");
-    content.appendChild(el("p", "worked-example-question", example.question));
+    const situation = el("p", "worked-example-question");
+    situation.appendChild(el("strong", null, "Ситуация: "));
+    situation.appendChild(document.createTextNode(example.question));
+    content.appendChild(situation);
+
+    if (example.hint) {
+      const hint = el("p", "worked-example-hint");
+      hint.appendChild(el("strong", null, "Что означают числа: "));
+      hint.appendChild(document.createTextNode(example.hint));
+      content.appendChild(hint);
+    }
+
+    content.appendChild(el("p", "worked-example-label", "Подставляем числа в формулу:"));
     const calculation = el("div", "worked-example-calculation");
     tex(calculation, example.calculation, true);
     content.appendChild(calculation);
 
     const answer = el("p", "worked-example-answer");
-    answer.appendChild(el("strong", null, "Ответ: "));
+    answer.appendChild(el("strong", null, "Простыми словами: "));
     answer.appendChild(document.createTextNode(example.answer));
     content.appendChild(answer);
     details.appendChild(content);

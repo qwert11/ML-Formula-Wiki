@@ -242,7 +242,20 @@ input { font: inherit; }
 .worked-example-content { font-size: 0.9rem; }
 
 .worked-example-question,
+.worked-example-hint,
+.worked-example-label,
 .worked-example-answer { margin: 0.35rem 0; }
+
+.worked-example-hint {
+  padding: 0.5rem 0.6rem;
+  border-left: 3px solid var(--accent);
+  background: var(--button-hover);
+}
+
+.worked-example-label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
 
 .worked-example-calculation {
   margin: 0.45rem 0;
