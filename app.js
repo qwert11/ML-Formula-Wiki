@@ -105,6 +105,7 @@ const EXTRA_LINK_ALIASES = {
 };
 
 let AUTO_LINK_TARGETS = [];
+const anchorReturnStack = [];
 
 function isStartBoundary(text, index) {
   if (index <= 0 || index >= text.length) return true;
@@ -236,6 +237,12 @@ function scrollToHash(hash) {
   return true;
 }
 
+function urlWithHash(hash) {
+  const url = new URL(location.href);
+  url.hash = hash || "";
+  return url.href;
+}
+
 function hideAnchorBackButtons() {
   document.querySelectorAll(".anchor-back:not([hidden])").forEach(button => {
     button.hidden = true;
@@ -251,11 +258,29 @@ function showAnchorBackButton(hash) {
 }
 
 function navigateToAnchor(hash) {
-  const returnY = window.scrollY;
+  const returnPoint = {
+    hash: location.hash,
+    scrollY: window.scrollY
+  };
   if (!scrollToHash(hash)) return;
-  history.replaceState({ ...(history.state || {}), anchorReturnY: returnY }, "", location.href);
-  history.pushState({ anchorTarget: hash }, "", hash);
+  anchorReturnStack.push(returnPoint);
+  history.pushState({ anchorTarget: hash }, "", urlWithHash(hash));
   showAnchorBackButton(hash);
+}
+
+function returnFromAnchor() {
+  const returnPoint = anchorReturnStack.pop();
+  hideAnchorBackButtons();
+
+  if (!returnPoint) {
+    history.back();
+    return;
+  }
+
+  history.replaceState(history.state, "", urlWithHash(returnPoint.hash));
+  window.scrollTo({ top: returnPoint.scrollY });
+
+  if (location.hash) showAnchorBackButton(location.hash);
 }
 
 function setupAnchorNavigation() {
@@ -272,11 +297,13 @@ function setupAnchorNavigation() {
 
   window.addEventListener("popstate", () => {
     hideAnchorBackButtons();
-    if (location.hash && scrollToHash(location.hash)) return;
-    if (history.state && typeof history.state.anchorReturnY === "number") {
-      window.scrollTo({ top: history.state.anchorReturnY });
+    if (anchorReturnStack.length) {
+      const returnPoint = anchorReturnStack.pop();
+      window.scrollTo({ top: returnPoint.scrollY });
+      if (location.hash) showAnchorBackButton(location.hash);
       return;
     }
+    if (location.hash && scrollToHash(location.hash)) return;
     window.scrollTo({ top: 0 });
   });
 }
@@ -289,7 +316,7 @@ function buildCard(f) {
   const anchorBack = el("button", "anchor-back", "← Назад");
   anchorBack.type = "button";
   anchorBack.hidden = true;
-  anchorBack.addEventListener("click", () => history.back());
+  anchorBack.addEventListener("click", returnFromAnchor);
   card.appendChild(anchorBack);
 
   // Заголовок: номер, название, страница
