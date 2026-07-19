@@ -43,7 +43,11 @@ FORMULAS.push(
 
     derivation: [
       { latex: "l(w)=y\\log\\phi(z)+(1-y)\\log(1-\\phi(z))",
-        comment: "берём логарифмическое правдоподобие для одного образца" },
+        comment: "берём 14. Логарифмическое правдоподобие для одного образца",
+        commentLink: {
+          text: "14. Логарифмическое правдоподобие",
+          formulaId: "log-likelihood"
+        } },
       { latex: "\\frac{\\partial}{\\partial \\phi}l(w)=\\frac{y}{\\phi(z)}-\\frac{1-y}{1-\\phi(z)}",
         comment: "дифференцируем по выходу сигмоиды" },
       { latex: "\\frac{\\partial}{\\partial w_j} l(w)=\\left(\\frac{y}{\\phi(z)}-\\frac{1-y}{1-\\phi(z)}\\right)\\frac{\\partial}{\\partial w_j}\\phi(z)",

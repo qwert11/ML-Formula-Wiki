@@ -239,6 +239,10 @@ input { font: inherit; }
   color: var(--muted);
 }
 
+.derivation-comment a {
+  color: var(--accent);
+}
+
 .worked-example-content { font-size: 0.9rem; }
 
 .worked-example-content h5 {

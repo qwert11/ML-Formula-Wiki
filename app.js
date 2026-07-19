@@ -29,6 +29,26 @@ function el(tag, className, text) {
   return node;
 }
 
+function linkedComment(step) {
+  const paragraph = el("p", "derivation-comment");
+  const link = step.commentLink;
+
+  if (!link || !step.comment.includes(link.text)) {
+    paragraph.textContent = step.comment;
+    return paragraph;
+  }
+
+  const [before, after] = step.comment.split(link.text);
+  paragraph.append(document.createTextNode(before));
+
+  const anchor = el("a", null, link.text);
+  anchor.href = "#formula-" + link.formulaId;
+  paragraph.appendChild(anchor);
+  paragraph.append(document.createTextNode(after));
+
+  return paragraph;
+}
+
 function buildCard(f) {
   const card = el("article", "formula-card");
   card.id = "formula-" + f.id;
@@ -69,7 +89,7 @@ function buildCard(f) {
       const stepTex = el("div", "derivation-latex");
       tex(stepTex, step.latex, true);
       li.appendChild(stepTex);
-      li.appendChild(el("p", "derivation-comment", step.comment));
+      li.appendChild(linkedComment(step));
       steps.appendChild(li);
     }
     details.appendChild(steps);
