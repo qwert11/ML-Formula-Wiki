@@ -167,10 +167,69 @@ function linkedComment(step, currentFormulaId) {
   return linkedEl("p", "derivation-comment", step.comment, currentFormulaId, [step.commentLink]);
 }
 
+function scrollToHash(hash) {
+  if (!hash) return false;
+  const target = document.getElementById(hash.slice(1));
+  if (!target) return false;
+  target.scrollIntoView({ block: "start" });
+  return true;
+}
+
+function hideAnchorBackButtons() {
+  document.querySelectorAll(".anchor-back:not([hidden])").forEach(button => {
+    button.hidden = true;
+  });
+}
+
+function showAnchorBackButton(hash) {
+  hideAnchorBackButtons();
+  if (!hash) return;
+  const target = document.getElementById(hash.slice(1));
+  const button = target && target.querySelector(".anchor-back");
+  if (button) button.hidden = false;
+}
+
+function navigateToAnchor(hash) {
+  const returnY = window.scrollY;
+  if (!scrollToHash(hash)) return;
+  history.replaceState({ ...(history.state || {}), anchorReturnY: returnY }, "", location.href);
+  history.pushState({ anchorTarget: hash }, "", hash);
+  showAnchorBackButton(hash);
+}
+
+function setupAnchorNavigation() {
+  document.addEventListener("click", event => {
+    const anchor = event.target.closest('a[href^="#formula-"]');
+    if (!anchor) return;
+
+    const hash = anchor.getAttribute("href");
+    if (!hash || !document.getElementById(hash.slice(1))) return;
+
+    event.preventDefault();
+    navigateToAnchor(hash);
+  });
+
+  window.addEventListener("popstate", () => {
+    hideAnchorBackButtons();
+    if (location.hash && scrollToHash(location.hash)) return;
+    if (history.state && typeof history.state.anchorReturnY === "number") {
+      window.scrollTo({ top: history.state.anchorReturnY });
+      return;
+    }
+    window.scrollTo({ top: 0 });
+  });
+}
+
 function buildCard(f) {
   const card = el("article", "formula-card");
   card.id = "formula-" + f.id;
   card.dataset.name = f.name.toLowerCase();
+
+  const anchorBack = el("button", "anchor-back", "← Назад");
+  anchorBack.type = "button";
+  anchorBack.hidden = true;
+  anchorBack.addEventListener("click", () => history.back());
+  card.appendChild(anchorBack);
 
   // Заголовок: номер, название, страница
   const title = el("h3", null, f.order + ". " + f.name + " ");
@@ -393,4 +452,7 @@ document.addEventListener("DOMContentLoaded", () => {
   empty.id = "empty-state";
   empty.hidden = true;
   root.appendChild(empty);
+
+  setupAnchorNavigation();
+  scrollToHash(location.hash);
 });
