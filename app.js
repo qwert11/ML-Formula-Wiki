@@ -257,9 +257,9 @@ function showAnchorBackButton(hash) {
   if (button) button.hidden = false;
 }
 
-function navigateToAnchor(hash) {
+function navigateToAnchor(hash, sourceCard) {
   const returnPoint = {
-    hash: location.hash,
+    hash: sourceCard ? "#" + sourceCard.id : location.hash,
     scrollY: window.scrollY
   };
   if (!scrollToHash(hash)) return;
@@ -278,12 +278,18 @@ function returnFromAnchor() {
   }
 
   history.replaceState(history.state, "", urlWithHash(returnPoint.hash));
-  window.scrollTo({ top: returnPoint.scrollY });
+  window.requestAnimationFrame(() => {
+    window.scrollTo({ top: returnPoint.scrollY });
+  });
 
   if (location.hash) showAnchorBackButton(location.hash);
 }
 
 function setupAnchorNavigation() {
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
+
   document.addEventListener("click", event => {
     const anchor = event.target.closest('a[href^="#formula-"]');
     if (!anchor) return;
@@ -292,14 +298,17 @@ function setupAnchorNavigation() {
     if (!hash || !document.getElementById(hash.slice(1))) return;
 
     event.preventDefault();
-    navigateToAnchor(hash);
+    navigateToAnchor(hash, anchor.closest(".formula-card"));
   });
 
   window.addEventListener("popstate", () => {
     hideAnchorBackButtons();
     if (anchorReturnStack.length) {
       const returnPoint = anchorReturnStack.pop();
-      window.scrollTo({ top: returnPoint.scrollY });
+      history.replaceState(history.state, "", urlWithHash(returnPoint.hash));
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top: returnPoint.scrollY });
+      });
       if (location.hash) showAnchorBackButton(location.hash);
       return;
     }
