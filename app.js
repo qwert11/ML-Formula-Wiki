@@ -29,84 +29,144 @@ function el(tag, className, text) {
   return node;
 }
 
-const AUTO_LINKS = [
-  { id: "unit-step-function", patterns: [/единичн[а-яё-]* ступенчат[а-яё-]* функц[а-яё-]*/giu, /функц[а-яё-]* хевисайд[а-яё-]*/giu] },
-  { id: "net-input", patterns: [/чист[а-яё-]* вход[а-яё-]*/giu, /взвешенн[а-яё-]* сумм[а-яё-]*/giu, /скалярн[а-яё-]* произведен[а-яё-]*/giu, /w\^T x/giu] },
-  { id: "perceptron-rule", patterns: [/правил[а-яё-]* обучен[а-яё-]* персептрон[а-яё-]*/giu] },
-  { id: "sse-cost", patterns: [/функц[а-яё-]* стоимост[а-яё-]* SSE/giu, /сумм[а-яё-]* квадрат[а-яё-]* ошиб[а-яё-]*/giu, /SSE/giu] },
-  { id: "batch-gradient-descent", patterns: [/пакетн[а-яё-]* градиентн[а-яё-]* спуск[а-яё-]*/giu, /градиентн[а-яё-]* спуск[а-яё-]*/giu, /градиент[а-яё-]*/giu] },
-  { id: "sse-gradient", patterns: [/градиент[а-яё-]* функц[а-яё-]* стоимост[а-яё-]* SSE/giu, /ADALINE/giu] },
-  { id: "standardization", patterns: [/стандартизац[а-яё-]*/giu, /стандартн[а-яё-]* отклонен[а-яё-]*/giu] },
-  { id: "sgd-update", patterns: [/стохастическ[а-яё-]* градиентн[а-яё-]* спуск[а-яё-]*/giu, /обновлен[а-яё-]* вес[а-яё-]*/giu, /SGD/giu] },
-  { id: "adaptive-learning-rate", patterns: [/адаптивн[а-яё-]* темп[а-яё-]* обучен[а-яё-]*/giu] },
-  { id: "odds-ratio", patterns: [/отношен[а-яё-]* шанс[а-яё-]*/giu, /шанс[а-яё-]* против/giu, /шанс[а-яё-]*/giu] },
-  { id: "logit", patterns: [/логит[а-яё-]*/giu, /logit/giu] },
-  { id: "sigmoid", patterns: [/сигмоид[а-яё-]*/giu, /логистическ[а-яё-]* функц[а-яё-]*/giu, /активац[а-яё-]*/giu] },
-  { id: "likelihood", patterns: [/функц[а-яё-]* правдоподоб[а-яё-]*/giu, /правдоподоб[а-яё-]*/giu, /формул[аы]\s+7/giu] },
-  { id: "log-likelihood", patterns: [/логарифмическ[а-яё-]* правдоподоб[а-яё-]*/giu, /лог-правдоподоб[а-яё-]*/giu, /формул[аы]\s+8/giu] },
-  { id: "logistic-cost", patterns: [/логистическ[а-яё-]* функц[а-яё-]* стоимост[а-яё-]*/giu, /log-loss/giu, /перекр[её]стн[а-яё-]* энтроп[а-яё-]*/giu] },
-  { id: "sigmoid-derivative", patterns: [/производн[а-яё-]* сигмоид[а-яё-]*/giu, /производн[а-яё-]*/giu] },
-  { id: "l2-regularization", patterns: [/L2(?:-| )?регуляризац[а-яё-]*/giu, /L2/giu, /регуляризац[а-яё-]*/giu] },
-  { id: "svm-margin", patterns: [/зазор[а-яё-]*/giu, /марж[а-яё-]*/giu] },
-  { id: "svm-soft-margin", patterns: [/мягк[а-яё-]* зазор[а-яё-]*/giu] },
-  { id: "kernel-trick", patterns: [/ядерн[а-яё-]* трюк[а-яё-]*/giu, /ядерн[а-яё-]*/giu, /ядр[а-яё-]*/giu] },
-  { id: "rbf-kernel", patterns: [/RBF/giu, /гауссов[а-яё-]* ядр[а-яё-]*/giu] },
-  { id: "information-gain", patterns: [/прирост[а-яё-]* информац[а-яё-]*/giu] },
-  { id: "entropy", patterns: [/энтроп[а-яё-]*/giu] },
-  { id: "gini-impurity", patterns: [/джини/giu] },
-  { id: "classification-error", patterns: [/ошибк[а-яё-]* классификац[а-яё-]*/giu] },
-  { id: "minkowski-distance", patterns: [/расстоян[а-яё-]* минковск[а-яё-]*/giu, /Minkowski/giu] },
-  { id: "min-max-scaling", patterns: [/минимаксн[а-яё-]* масштабирован[а-яё-]*/giu, /масштабирован[а-яё-]*/giu, /min-?max/giu] },
-  { id: "l1-regularization", patterns: [/L1(?:-| )?регуляризац[а-яё-]*/giu, /L1/giu] },
-  { id: "covariance", patterns: [/ковариац[а-яё-]*/giu] },
-  { id: "eigen-decomposition", patterns: [/собственн[а-яё-]* вектор[а-яё-]*/giu, /собственн[а-яё-]* значен[а-яё-]*/giu, /собственн[а-яё-]* разложен[а-яё-]*/giu, /собственн[а-яё-]*/giu] },
-  { id: "explained-variance-ratio", patterns: [/дол[а-яё-]* объясн[её]нн[а-яё-]* дисперс[а-яё-]*/giu] },
-  { id: "pca-projection", patterns: [/PCA/giu, /главн[а-яё-]* компонент[а-яё-]*/giu, /компонент[а-яё-]*/giu] },
-  { id: "lda-mean-vector", patterns: [/вектор[а-яё-]* средн[а-яё-]*/giu] },
-  { id: "lda-within-scatter", patterns: [/внутриклассов[а-яё-]* матриц[а-яё-]* разброс[а-яё-]*/giu] },
-  { id: "lda-between-scatter", patterns: [/межклассов[а-яё-]* матриц[а-яё-]* разброс[а-яё-]*/giu, /LDA/giu] },
-  { id: "kernel-matrix", patterns: [/матриц[а-яё-]* ядр[а-яё-]*/giu] },
-  { id: "polynomial-kernel", patterns: [/полиномиальн[а-яё-]* ядр[а-яё-]*/giu] },
-  { id: "sigmoid-kernel", patterns: [/сигмоидн[а-яё-]* ядр[а-яё-]*/giu] },
-  { id: "kernel-centering", patterns: [/центрирован[а-яё-]* матриц[а-яё-]* ядр[а-яё-]*/giu] },
-  { id: "error-accuracy", patterns: [/верност[а-яё-]*/giu, /accuracy/giu, /ошибк[а-яё-]*/giu] },
-  { id: "fpr-tpr", patterns: [/FPR/giu, /TPR/giu, /ложно-?[а-яё-]* положительн[а-яё-]*/giu, /истинно-?[а-яё-]* положительн[а-яё-]*/giu] },
-  { id: "precision-recall", patterns: [/точност[а-яё-]*/giu, /полнот[а-яё-]*/giu, /precision/giu, /recall/giu] },
-  { id: "f1-score", patterns: [/F1/giu] },
-  { id: "majority-voting", patterns: [/мажоритарн[а-яё-]* голосован[а-яё-]*/giu] },
-  { id: "ensemble-error", patterns: [/ошибк[а-яё-]* ансамбл[а-яё-]*/giu, /ансамбл[а-яё-]*/giu] },
-  { id: "weighted-majority-voting", patterns: [/взвешенн[а-яё-]* мажоритарн[а-яё-]* голосован[а-яё-]*/giu] },
-  { id: "probability-voting", patterns: [/голосован[а-яё-]* вероятност[а-яё-]*/giu] },
-  { id: "adaboost", patterns: [/AdaBoost/giu] },
-  { id: "tf-idf", patterns: [/tf-?idf/giu] },
-  { id: "multiple-linear-regression", patterns: [/множественн[а-яё-]* линейн[а-яё-]* регресс[а-яё-]*/giu, /линейн[а-яё-]* регресс[а-яё-]*/giu] },
-  { id: "pearson-correlation", patterns: [/корреляц[а-яё-]* пирсон[а-яё-]*/giu] },
-  { id: "mse", patterns: [/MSE/giu, /среднеквадратичн[а-яё-]* ошибк[а-яё-]*/giu, /средн[а-яё-]* квадрат[а-яё-]* ошибк[а-яё-]*/giu] },
-  { id: "r-squared", patterns: [/R\^2/giu, /коэффициент[а-яё-]* детерминац[а-яё-]*/giu] },
-  { id: "ridge-regression", patterns: [/гребнев[а-яё-]* регресс[а-яё-]*/giu, /ridge/giu] },
-  { id: "lasso-regression", patterns: [/лассо/giu, /Lasso/giu] },
-  { id: "elastic-net", patterns: [/эластичн[а-яё-]* сет[а-яё-]*/giu, /Elastic Net/giu] },
-  { id: "polynomial-regression", patterns: [/полиномиальн[а-яё-]* регресс[а-яё-]*/giu] },
-  { id: "squared-euclidean-distance", patterns: [/квадратичн[а-яё-]* евклидов[а-яё-]* расстоян[а-яё-]*/giu, /евклидов[а-яё-]*/giu, /расстоян[а-яё-]*/giu] },
-  { id: "kmeans-sse", patterns: [/k-?means/giu, /внутрикластерн[а-яё-]* сумм[а-яё-]* квадрат[а-яё-]*/giu] },
-  { id: "fcm-objective", patterns: [/неч[её]тк[а-яё-]* c-?means/giu, /неч[её]тк[а-яё-]*/giu] },
-  { id: "fcm-membership", patterns: [/степен[а-яё-]* принадлежност[а-яё-]*/giu] },
-  { id: "silhouette", patterns: [/силуэтн[а-яё-]* коэффициент[а-яё-]*/giu, /кластер[а-яё-]*/giu] },
-  { id: "mlp-hidden-activation", patterns: [/активац[а-яё-]* узл[а-яё-]* скрыт[а-яё-]* сло[а-яё-]*/giu, /нейрон[а-яё-]*/giu] },
-  { id: "mlp-forward-propagation", patterns: [/прям[а-яё-]* распространен[а-яё-]*/giu] },
-  { id: "mlp-cost", patterns: [/функц[а-яё-]* стоимост[а-яё-]* MLP/giu] },
-  { id: "backpropagation", patterns: [/обратн[а-яё-]* распространен[а-яё-]*/giu, /backpropagation/giu, /backprop/giu] },
-  { id: "gradient-checking", patterns: [/проверк[а-яё-]* градиент[а-яё-]*/giu] },
-  { id: "softmax", patterns: [/softmax/giu, /многоклассов[а-яё-]*/giu] },
-  { id: "tanh-activation", patterns: [/tanh/giu, /гиперболическ[а-яё-]* тангенс[а-яё-]*/giu] },
-  { id: "log-likelihood-partial-weight", patterns: [/частн[а-яё-]* производн[а-яё-]* логарифмическ[а-яё-]* правдоподоб[а-яё-]* по вес[а-яё-]*/giu] },
-  { id: "sigmoid-chain-weight", patterns: [/производн[а-яё-]* сигмоид[а-яё-]* по вес[а-яё-]*/giu] },
-  { id: "logistic-gradient", patterns: [/градиент[а-яё-]* логистическ[а-яё-]* регресс[а-яё-]*/giu] }
-];
+const EXTRA_LINK_ALIASES = {
+  "unit-step-function": ["функция Хевисайда", "ступенчатая функция"],
+  "net-input": ["чистый вход", "взвешенная сумма", "скалярное произведение", "w^T x"],
+  "perceptron-rule": ["правило обучения персептрона"],
+  "sse-cost": ["SSE", "сумма квадратов ошибок", "сумма квадратов"],
+  "batch-gradient-descent": ["градиентный спуск", "градиента", "градиент"],
+  "sse-gradient": ["ADALINE", "градиент функции стоимости SSE"],
+  "standardization": ["стандартизация", "стандартизованных", "стандартное отклонение"],
+  "sgd-update": ["SGD", "обновление весов", "стохастический градиентный спуск"],
+  "adaptive-learning-rate": ["адаптивный темп обучения", "темп обучения"],
+  "odds-ratio": ["отношение шансов", "шансы"],
+  "logit": ["логит", "logit"],
+  "sigmoid": ["сигмоида", "сигмоиды", "сигмоидой", "сигмоидальная функция", "логистическая функция", "активация", "активации"],
+  "likelihood": ["формула 7", "формулы 7", "правдоподобие", "правдоподобия", "функция правдоподобия"],
+  "log-likelihood": ["формула 8", "формулы 8", "логарифмическое правдоподобие", "логарифмического правдоподобия", "лог-правдоподобие"],
+  "logistic-cost": ["логистическая функция стоимости", "log-loss", "перекрёстная энтропия", "перекрестная энтропия"],
+  "sigmoid-derivative": ["производная сигмоиды", "производной сигмоиды", "производная"],
+  "l2-regularization": ["L2", "L2-регуляризация", "L2-регуляризации", "регуляризация"],
+  "svm-margin": ["зазор", "маржа"],
+  "svm-soft-margin": ["мягкий зазор"],
+  "kernel-trick": ["ядерный трюк", "ядерная функция", "ядро", "ядра"],
+  "rbf-kernel": ["RBF", "гауссово ядро"],
+  "information-gain": ["прирост информации"],
+  "entropy": ["энтропия", "энтропии", "энтропийным"],
+  "gini-impurity": ["Джини", "джини"],
+  "classification-error": ["ошибка классификации"],
+  "minkowski-distance": ["расстояние Минковского", "Minkowski"],
+  "min-max-scaling": ["минимаксное масштабирование", "масштабирование"],
+  "l1-regularization": ["L1", "L1-регуляризация", "L1-регуляризации"],
+  "covariance": ["ковариация", "ковариации"],
+  "eigen-decomposition": ["собственный вектор", "собственные значения", "собственных значений", "собственные"],
+  "explained-variance-ratio": ["доля объяснённой дисперсии", "доля объясненной дисперсии"],
+  "pca-projection": ["PCA", "главные компоненты", "главная компонента"],
+  "lda-mean-vector": ["вектор средних"],
+  "lda-within-scatter": ["внутриклассовая матрица разброса"],
+  "lda-between-scatter": ["межклассовая матрица разброса", "LDA"],
+  "kernel-matrix": ["матрица ядра"],
+  "polynomial-kernel": ["полиномиальное ядро"],
+  "sigmoid-kernel": ["сигмоидное ядро"],
+  "kernel-centering": ["центрирование матрицы ядра"],
+  "error-accuracy": ["верность", "accuracy", "ошибка"],
+  "fpr-tpr": ["FPR", "TPR", "ложно-положительных", "истинно-положительных"],
+  "precision-recall": ["точность", "полнота", "precision", "recall"],
+  "f1-score": ["F1"],
+  "majority-voting": ["мажоритарное голосование"],
+  "ensemble-error": ["ошибка ансамбля", "ансамбль", "ансамбля"],
+  "weighted-majority-voting": ["взвешенное мажоритарное голосование"],
+  "probability-voting": ["голосование вероятностями"],
+  "adaboost": ["AdaBoost"],
+  "tf-idf": ["tf-idf", "tfidf"],
+  "multiple-linear-regression": ["множественная линейная регрессия", "линейная регрессия"],
+  "pearson-correlation": ["корреляция Пирсона"],
+  "mse": ["MSE", "среднеквадратичная ошибка", "средний квадрат ошибки"],
+  "r-squared": ["R^2", "коэффициент детерминации"],
+  "ridge-regression": ["гребневая регрессия", "ridge"],
+  "lasso-regression": ["лассо", "Lasso"],
+  "elastic-net": ["эластичная сеть", "Elastic Net"],
+  "polynomial-regression": ["полиномиальная регрессия"],
+  "squared-euclidean-distance": ["квадратичное евклидово расстояние", "евклидово", "расстояние"],
+  "kmeans-sse": ["k-means", "kmeans", "внутрикластерная сумма квадратов"],
+  "fcm-objective": ["нечёткое c-means", "нечеткое c-means"],
+  "fcm-membership": ["степень принадлежности"],
+  "silhouette": ["силуэтный коэффициент", "кластер", "кластера", "кластере"],
+  "mlp-hidden-activation": ["нейрон", "нейрона", "нейросети", "активация узла скрытого слоя"],
+  "mlp-forward-propagation": ["прямое распространение"],
+  "mlp-cost": ["функция стоимости MLP"],
+  "backpropagation": ["обратное распространение", "backpropagation", "backprop"],
+  "gradient-checking": ["проверка градиента"],
+  "softmax": ["softmax", "многоклассовая", "многоклассовой"],
+  "tanh-activation": ["tanh", "гиперболический тангенс"],
+  "log-likelihood-partial-weight": ["частная производная логарифмического правдоподобия по весу"],
+  "sigmoid-chain-weight": ["производная сигмоиды по весу"],
+  "logistic-gradient": ["градиент логистической регрессии"]
+};
 
-function isLinkBoundary(text, index) {
+let AUTO_LINK_TARGETS = [];
+
+function isStartBoundary(text, index) {
+  if (index <= 0 || index >= text.length) return true;
+  return !/[\p{L}\p{N}_]/u.test(text[index - 1]);
+}
+
+function isEndBoundary(text, index) {
   if (index <= 0 || index >= text.length) return true;
   return !/[\p{L}\p{N}_]/u.test(text[index]);
+}
+
+function normalizeLinkText(text) {
+  return String(text).toLocaleLowerCase("ru-RU");
+}
+
+function compactName(name) {
+  return name
+    .replace(/\s*\([^)]*\)/g, "")
+    .replace(/\s+—\s+.*/g, "")
+    .trim();
+}
+
+function addAlias(targets, formulaId, value, priority) {
+  const alias = String(value || "").trim();
+  if (alias.length < 2) return;
+  targets.push({
+    id: formulaId,
+    alias,
+    normalizedAlias: normalizeLinkText(alias),
+    priority
+  });
+}
+
+function setupAutoLinkTargets(formulas) {
+  const targets = [];
+
+  for (const formula of formulas) {
+    const generatedAliases = new Set();
+    const manualAliases = new Set(EXTRA_LINK_ALIASES[formula.id] || []);
+    const shortName = compactName(formula.name);
+
+    generatedAliases.add(formula.name);
+    generatedAliases.add(shortName);
+    generatedAliases.add(`${formula.order}. ${shortName}`);
+    generatedAliases.add(`${formula.order}.${shortName}`);
+    generatedAliases.add(`карточка ${formula.order}`);
+    generatedAliases.add(`карточки ${formula.order}`);
+
+    for (const alias of generatedAliases) addAlias(targets, formula.id, alias, 0);
+    for (const alias of manualAliases) addAlias(targets, formula.id, alias, 1);
+  }
+
+  const deduped = [];
+  const seen = new Set();
+  for (const target of targets.sort((a, b) => b.priority - a.priority)) {
+    const key = target.id + "\0" + target.normalizedAlias;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(target);
+  }
+
+  AUTO_LINK_TARGETS = deduped.sort((a, b) => b.alias.length - a.alias.length || b.priority - a.priority);
 }
 
 function makeTextLink(text, formulaId) {
@@ -117,20 +177,21 @@ function makeTextLink(text, formulaId) {
 
 function collectAutoLinks(text, currentFormulaId) {
   const matches = [];
-  for (const link of AUTO_LINKS) {
-    if (link.id === currentFormulaId) continue;
-    for (const pattern of link.patterns) {
-      pattern.lastIndex = 0;
-      let match;
-      while ((match = pattern.exec(text))) {
-        const start = match.index;
-        const end = start + match[0].length;
-        if (match[0].length && isLinkBoundary(text, start) && isLinkBoundary(text, end)) {
-          matches.push({ start, end, id: link.id });
-        }
+  const normalizedText = normalizeLinkText(text);
+
+  for (const target of AUTO_LINK_TARGETS) {
+    if (target.id === currentFormulaId) continue;
+
+    let start = normalizedText.indexOf(target.normalizedAlias);
+    while (start !== -1) {
+      const end = start + target.normalizedAlias.length;
+      if (isStartBoundary(text, start) && isEndBoundary(text, end)) {
+        matches.push({ start, end, id: target.id });
       }
+      start = normalizedText.indexOf(target.normalizedAlias, start + target.normalizedAlias.length);
     }
   }
+
   return matches;
 }
 
@@ -422,6 +483,7 @@ function applySearch(query) {
 document.addEventListener("DOMContentLoaded", () => {
   const root = document.getElementById("app");
   const sorted = [...FORMULAS].sort((a, b) => a.order - b.order);
+  setupAutoLinkTargets(sorted);
 
   // Поиск
   const searchWrap = el("div", "search-wrap");
