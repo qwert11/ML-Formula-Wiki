@@ -239,6 +239,7 @@ input { font: inherit; }
   color: var(--muted);
 }
 
+.internal-link,
 .derivation-comment a {
   color: var(--accent);
 }
