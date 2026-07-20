@@ -679,10 +679,60 @@ const FORMULAS = [
   },
 
   {
-    id: "l2-regularization",
+    id: "logistic-regression-weight-update",
     block: "B",
     order: 17,
     page: 81,
+    chapter: "Глава 3",
+
+    latex: "w_j := w_j + \\eta \\sum_{i=1}^{n} \\left( y^{(i)} - \\phi\\left(z^{(i)}\\right) \\right) x_j^{(i)}",
+
+    name: "Правило обновления весов логистической регрессии",
+    discovered: {
+      who: "градиентная оптимизация логистической регрессии; в книге выводится из логарифмического правдоподобия",
+      year: "сер. XX в.",
+      note: "на стр. 81 также приведены векторные формы w := w + Δw, Δw = η∇l(w) и Δw := −η∇J(w)"
+    },
+
+    params: [
+      { symbol: "w_j", desc: "j-й вес логистической регрессии" },
+      { symbol: "\\eta", desc: "темп обучения" },
+      { symbol: "y^{(i)}", desc: "истинная метка i-го образца: 0 или 1" },
+      { symbol: "\\phi(z^{(i)})", desc: "предсказанная вероятность класса 1 для i-го образца" },
+      { symbol: "x_j^{(i)}", desc: "значение j-го признака i-го образца" },
+      { symbol: "n", desc: "число тренировочных образцов" }
+    ],
+
+    description:
+      "Финальное правило обучения логистической регрессии после дифференцирования логарифмического " +
+      "правдоподобия. Вес сдвигается пропорционально ошибке вероятности y − φ(z) и значению признака: " +
+      "если модель недооценила правильный класс, вес растёт; если переоценила — уменьшается. Внешне " +
+      "формула совпадает с правилом ADALINE, но смысл другой: здесь градиент получен из логистической " +
+      "функции стоимости, а не из квадратичной ошибки.",
+
+    examples: [
+      "Ручная реализация batch-gradient обучения логистической регрессии: все поправки по образцам суммируются перед обновлением веса.",
+      "Та же структура лежит под капотом оптимизаторов LogisticRegression, только на практике используются более устойчивые численные методы.",
+      "Связующее звено между выводом производной на стр. 80 и переходом к регуляризации на стр. 82."
+    ],
+
+    derivation: [
+      { latex: "\\frac{\\partial}{\\partial w_j} l(w) = \\sum_{i=1}^{n} \\left( y^{(i)} - \\phi\\left(z^{(i)}\\right) \\right) x_j^{(i)}",
+        comment: "берём градиент логарифмического правдоподобия по j-му весу" },
+      { latex: "\\Delta w_j = \\eta \\frac{\\partial}{\\partial w_j} l(w)",
+        comment: "для максимизации правдоподобия идём по направлению градиента" },
+      { latex: "\\Delta w_j = -\\eta \\frac{\\partial J}{\\partial w_j} = \\eta \\sum_{i=1}^{n} \\left( y^{(i)} - \\phi\\left(z^{(i)}\\right) \\right) x_j^{(i)}",
+        comment: "то же самое через минимизацию стоимости J(w) = −l(w)" },
+      { latex: "w := w + \\Delta w, \\qquad \\Delta w := -\\eta \\nabla J(w)",
+        comment: "векторная форма одновременного обновления всех весов" }
+    ]
+  },
+
+  {
+    id: "l2-regularization",
+    block: "B",
+    order: 18,
+    page: 82,
     chapter: "Глава 3",
 
     latex: "\\frac{\\lambda}{2} \\lVert w \\rVert^2 = \\frac{\\lambda}{2} \\sum_{j=1}^{m} w_j^2, \\qquad C = \\frac{1}{\\lambda}",
@@ -691,7 +741,7 @@ const FORMULAS = [
     discovered: {
       who: "А. Н. Тихонов (регуляризация некорректных задач); в статистике — гребневая регрессия А. Хёрла и Р. Кеннарда",
       year: "1943 / 1970",
-      note: ""
+      note: "L2-штраф начинается на стр. 82; связь C = 1/λ приведена на стр. 83"
     },
 
     params: [
@@ -722,7 +772,7 @@ const FORMULAS = [
   {
     id: "svm-margin",
     block: "C",
-    order: 18,
+    order: 19,
     page: 85,
     chapter: "Глава 3",
 
@@ -773,7 +823,7 @@ const FORMULAS = [
   {
     id: "svm-soft-margin",
     block: "C",
-    order: 19,
+    order: 20,
     page: 86,
     chapter: "Глава 3",
 
@@ -810,7 +860,7 @@ const FORMULAS = [
   {
     id: "kernel-trick",
     block: "C",
-    order: 20,
+    order: 21,
     page: 91,
     chapter: "Глава 3",
 
@@ -848,7 +898,7 @@ const FORMULAS = [
   {
     id: "rbf-kernel",
     block: "C",
-    order: 21,
+    order: 22,
     page: 91,
     chapter: "Глава 3",
 
@@ -896,7 +946,7 @@ const FORMULAS = [
   {
     id: "information-gain",
     block: "D",
-    order: 22,
+    order: 23,
     page: 94,
     chapter: "Глава 3",
 
@@ -937,7 +987,7 @@ const FORMULAS = [
   {
     id: "entropy",
     block: "D",
-    order: 23,
+    order: 24,
     page: 95,
     chapter: "Глава 3",
 
@@ -986,7 +1036,7 @@ const FORMULAS = [
   {
     id: "gini-impurity",
     block: "D",
-    order: 24,
+    order: 25,
     page: 95,
     chapter: "Глава 3",
 
@@ -1034,7 +1084,7 @@ const FORMULAS = [
   {
     id: "classification-error",
     block: "D",
-    order: 25,
+    order: 26,
     page: 96,
     chapter: "Глава 3",
 
@@ -1074,7 +1124,7 @@ const FORMULAS = [
   {
     id: "minkowski-distance",
     block: "D",
-    order: 26,
+    order: 27,
     page: 105,
     chapter: "Глава 3",
 
@@ -1114,7 +1164,7 @@ const FORMULAS = [
   {
     id: "min-max-scaling",
     block: "F",
-    order: 27,
+    order: 28,
     page: 118,
     chapter: "Глава 4",
 
@@ -1153,7 +1203,7 @@ const FORMULAS = [
   {
     id: "l1-regularization",
     block: "F",
-    order: 28,
+    order: 29,
     page: 120,
     chapter: "Глава 4",
 
@@ -1163,7 +1213,7 @@ const FORMULAS = [
     discovered: {
       who: "Р. Тибширани (лассо-регрессия); сама норма — классический функциональный анализ",
       year: 1996,
-      note: "квадрат нормы L2 — см. карточку L2-регуляризации (стр. 81–83)"
+      note: "квадрат нормы L2 — см. карточку L2-регуляризации (стр. 82–83)"
     },
 
     params: [
@@ -1193,7 +1243,7 @@ const FORMULAS = [
   {
     id: "covariance",
     block: "G",
-    order: 29,
+    order: 30,
     page: 135,
     chapter: "Глава 5",
 
@@ -1232,7 +1282,7 @@ const FORMULAS = [
   {
     id: "eigen-decomposition",
     block: "G",
-    order: 30,
+    order: 31,
     page: 136,
     chapter: "Глава 5",
 
@@ -1270,7 +1320,7 @@ const FORMULAS = [
   {
     id: "explained-variance-ratio",
     block: "G",
-    order: 31,
+    order: 32,
     page: 137,
     chapter: "Глава 5",
 
@@ -1306,7 +1356,7 @@ const FORMULAS = [
   {
     id: "pca-projection",
     block: "G",
-    order: 32,
+    order: 33,
     page: 139,
     chapter: "Глава 5",
 
@@ -1345,7 +1395,7 @@ const FORMULAS = [
   {
     id: "lda-mean-vector",
     block: "G",
-    order: 33,
+    order: 34,
     page: 145,
     chapter: "Глава 5",
 
@@ -1384,7 +1434,7 @@ const FORMULAS = [
   {
     id: "lda-within-scatter",
     block: "G",
-    order: 34,
+    order: 35,
     page: 145,
     chapter: "Глава 5",
 
@@ -1424,7 +1474,7 @@ const FORMULAS = [
   {
     id: "lda-between-scatter",
     block: "G",
-    order: 35,
+    order: 36,
     page: 146,
     chapter: "Глава 5",
 
@@ -1464,7 +1514,7 @@ const FORMULAS = [
   {
     id: "kernel-matrix",
     block: "G",
-    order: 36,
+    order: 37,
     page: 154,
     chapter: "Глава 5",
 
@@ -1502,7 +1552,7 @@ const FORMULAS = [
   {
     id: "polynomial-kernel",
     block: "G",
-    order: 37,
+    order: 38,
     page: 154,
     chapter: "Глава 5",
 
@@ -1541,7 +1591,7 @@ const FORMULAS = [
   {
     id: "sigmoid-kernel",
     block: "G",
-    order: 38,
+    order: 39,
     page: 154,
     chapter: "Глава 5",
 
@@ -1580,7 +1630,7 @@ const FORMULAS = [
   {
     id: "kernel-centering",
     block: "G",
-    order: 39,
+    order: 40,
     page: 155,
     chapter: "Глава 5",
 
@@ -1620,7 +1670,7 @@ const FORMULAS = [
   {
     id: "error-accuracy",
     block: "H",
-    order: 40,
+    order: 41,
     page: 186,
     chapter: "Глава 6",
 
@@ -1661,7 +1711,7 @@ const FORMULAS = [
   {
     id: "fpr-tpr",
     block: "H",
-    order: 41,
+    order: 42,
     page: 187,
     chapter: "Глава 6",
 
@@ -1700,7 +1750,7 @@ const FORMULAS = [
   {
     id: "precision-recall",
     block: "H",
-    order: 42,
+    order: 43,
     page: 187,
     chapter: "Глава 6",
 
@@ -1739,7 +1789,7 @@ const FORMULAS = [
   {
     id: "f1-score",
     block: "H",
-    order: 43,
+    order: 44,
     page: 187,
     chapter: "Глава 6",
 
@@ -1779,7 +1829,7 @@ const FORMULAS = [
   {
     id: "majority-voting",
     block: "I",
-    order: 44,
+    order: 45,
     page: 195,
     chapter: "Глава 7",
 
@@ -1818,7 +1868,7 @@ const FORMULAS = [
   {
     id: "ensemble-error",
     block: "I",
-    order: 45,
+    order: 46,
     page: 195,
     chapter: "Глава 7",
 
@@ -1858,7 +1908,7 @@ const FORMULAS = [
   {
     id: "weighted-majority-voting",
     block: "I",
-    order: 46,
+    order: 47,
     page: 198,
     chapter: "Глава 7",
 
@@ -1899,7 +1949,7 @@ const FORMULAS = [
   {
     id: "probability-voting",
     block: "I",
-    order: 47,
+    order: 48,
     page: 199,
     chapter: "Глава 7",
 
@@ -1938,7 +1988,7 @@ const FORMULAS = [
   {
     id: "adaboost",
     block: "I",
-    order: 48,
+    order: 49,
     page: 216,
     chapter: "Глава 7",
 
@@ -1980,7 +2030,7 @@ const FORMULAS = [
   {
     id: "tf-idf",
     block: "J",
-    order: 49,
+    order: 50,
     page: 226,
     chapter: "Глава 8",
 
@@ -2022,7 +2072,7 @@ const FORMULAS = [
   {
     id: "multiple-linear-regression",
     block: "K",
-    order: 50,
+    order: 51,
     page: 261,
     chapter: "Глава 10",
 
@@ -2063,7 +2113,7 @@ const FORMULAS = [
   {
     id: "pearson-correlation",
     block: "K",
-    order: 51,
+    order: 52,
     page: 264,
     chapter: "Глава 10",
 
@@ -2103,7 +2153,7 @@ const FORMULAS = [
   {
     id: "mse",
     block: "K",
-    order: 52,
+    order: 53,
     page: 276,
     chapter: "Глава 10",
 
@@ -2142,7 +2192,7 @@ const FORMULAS = [
   {
     id: "r-squared",
     block: "K",
-    order: 53,
+    order: 54,
     page: 276,
     chapter: "Глава 10",
 
@@ -2181,7 +2231,7 @@ const FORMULAS = [
   {
     id: "ridge-regression",
     block: "K",
-    order: 54,
+    order: 55,
     page: 277,
     chapter: "Глава 10",
 
@@ -2221,7 +2271,7 @@ const FORMULAS = [
   {
     id: "lasso-regression",
     block: "K",
-    order: 55,
+    order: 56,
     page: 277,
     chapter: "Глава 10",
 
@@ -2260,7 +2310,7 @@ const FORMULAS = [
   {
     id: "elastic-net",
     block: "K",
-    order: 56,
+    order: 57,
     page: 278,
     chapter: "Глава 10",
 
@@ -2299,7 +2349,7 @@ const FORMULAS = [
   {
     id: "polynomial-regression",
     block: "K",
-    order: 57,
+    order: 58,
     page: 278,
     chapter: "Глава 10",
 
@@ -2342,7 +2392,7 @@ const FORMULAS = [
   {
     id: "squared-euclidean-distance",
     block: "L",
-    order: 58,
+    order: 59,
     page: 291,
     chapter: "Глава 11",
 
@@ -2381,7 +2431,7 @@ const FORMULAS = [
   {
     id: "kmeans-sse",
     block: "L",
-    order: 59,
+    order: 60,
     page: 291,
     chapter: "Глава 11",
 
@@ -2421,7 +2471,7 @@ const FORMULAS = [
   {
     id: "fcm-objective",
     block: "L",
-    order: 60,
+    order: 61,
     page: 295,
     chapter: "Глава 11",
 
@@ -2460,7 +2510,7 @@ const FORMULAS = [
   {
     id: "fcm-membership",
     block: "L",
-    order: 61,
+    order: 62,
     page: 296,
     chapter: "Глава 11",
 
@@ -2499,7 +2549,7 @@ const FORMULAS = [
   {
     id: "silhouette",
     block: "L",
-    order: 62,
+    order: 63,
     page: 298,
     chapter: "Глава 11",
 
@@ -2540,7 +2590,7 @@ const FORMULAS = [
   {
     id: "mlp-hidden-activation",
     block: "M",
-    order: 63,
+    order: 64,
     page: 320,
     chapter: "Глава 12",
 
@@ -2580,7 +2630,7 @@ const FORMULAS = [
   {
     id: "mlp-forward-propagation",
     block: "M",
-    order: 64,
+    order: 65,
     page: 321,
     chapter: "Глава 12",
 
@@ -2620,7 +2670,7 @@ const FORMULAS = [
   {
     id: "mlp-cost",
     block: "M",
-    order: 65,
+    order: 66,
     page: 339,
     chapter: "Глава 12",
 
@@ -2662,7 +2712,7 @@ const FORMULAS = [
   {
     id: "backpropagation",
     block: "M",
-    order: 66,
+    order: 67,
     page: 342,
     chapter: "Глава 12",
 
@@ -2703,7 +2753,7 @@ const FORMULAS = [
   {
     id: "gradient-checking",
     block: "M",
-    order: 67,
+    order: 68,
     page: 346,
     chapter: "Глава 12",
 
@@ -2744,7 +2794,7 @@ const FORMULAS = [
   {
     id: "softmax",
     block: "N",
-    order: 68,
+    order: 69,
     page: 370,
     chapter: "Глава 13",
 
@@ -2784,7 +2834,7 @@ const FORMULAS = [
   {
     id: "tanh-activation",
     block: "N",
-    order: 69,
+    order: 70,
     page: 371,
     chapter: "Глава 13",
 
