@@ -219,9 +219,99 @@ function appendLinkedText(parent, text, currentFormulaId, manualLinks = []) {
   if (cursor < text.length) parent.append(document.createTextNode(text.slice(cursor)));
 }
 
+const INLINE_MATH_PATTERN = /[^\p{Script=Cyrillic};:,.—]+(?:[=^_{}∂∇ΣΔδφλμηθξ‖≤≥≈₀-₉⁽⁾ᵀ][^\p{Script=Cyrillic};:,.—]*)+/gu;
+
+function normalizeInlineLatex(text) {
+  return text
+    .trim()
+    .replace(/−/g, "-")
+    .replace(/∗/g, "\\ast")
+    .replace(/∂/g, "\\partial")
+    .replace(/∇/g, "\\nabla")
+    .replace(/Σ/g, "\\sum")
+    .replace(/Δ/g, "\\Delta")
+    .replace(/δ/g, "\\delta")
+    .replace(/φ/g, "\\phi")
+    .replace(/λ/g, "\\lambda")
+    .replace(/η/g, "\\eta")
+    .replace(/θ/g, "\\theta")
+    .replace(/μ/g, "\\mu")
+    .replace(/σ/g, "\\sigma")
+    .replace(/ξ/g, "\\xi")
+    .replace(/‖([^‖]+)‖₂/g, "\\lVert $1 \\rVert_2")
+    .replace(/‖([^‖]+)‖\^2/g, "\\lVert $1 \\rVert^2")
+    .replace(/‖([^‖]+)‖/g, "\\lVert $1 \\rVert")
+    .replace(/₀/g, "_0")
+    .replace(/₁/g, "_1")
+    .replace(/₂/g, "_2")
+    .replace(/₃/g, "_3")
+    .replace(/₄/g, "_4")
+    .replace(/₅/g, "_5")
+    .replace(/₆/g, "_6")
+    .replace(/₇/g, "_7")
+    .replace(/₈/g, "_8")
+    .replace(/₉/g, "_9")
+    .replace(/ᵀ/g, "^T")
+    .replace(/⁽ⁱ⁾/g, "^{(i)}")
+    .replace(/⁽ʲ⁾/g, "^{(j)}")
+    .replace(/⁽ˡ⁾/g, "^{(l)}")
+    .replace(/ᵢ/g, "_i")
+    .replace(/ⱼ/g, "_j")
+    .replace(/ₙ/g, "_n");
+}
+
+function collectInlineMath(text) {
+  const matches = [];
+  for (const match of text.matchAll(INLINE_MATH_PATTERN)) {
+    const raw = match[0];
+    const start = match.index || 0;
+    const trimmedStart = start + raw.search(/\S/);
+    const trimmed = raw.trim();
+    if (!trimmed || trimmed.length < 2) continue;
+    if (/^[-+*/()[\]{}|\s]+$/.test(trimmed)) continue;
+    matches.push({
+      start: trimmedStart,
+      end: trimmedStart + trimmed.length,
+      latex: normalizeInlineLatex(trimmed)
+    });
+  }
+
+  const merged = [];
+  for (const match of matches) {
+    const previous = merged[merged.length - 1];
+    const gap = previous ? text.slice(previous.end, match.start).trim() : "";
+    if (previous && gap === ":" && match.latex.startsWith("=")) {
+      previous.end = match.end;
+      previous.latex = previous.latex + " :=" + match.latex.slice(1);
+    } else {
+      merged.push(match);
+    }
+  }
+  return merged;
+}
+
+function appendRichText(parent, text, currentFormulaId, manualLinks = []) {
+  const value = text || "";
+  const mathMatches = collectInlineMath(value);
+  let cursor = 0;
+
+  for (const match of mathMatches) {
+    if (match.start < cursor) continue;
+    if (cursor < match.start) {
+      appendLinkedText(parent, value.slice(cursor, match.start), currentFormulaId, manualLinks);
+    }
+    const inline = el("span", "inline-math");
+    tex(inline, match.latex, false);
+    parent.appendChild(inline);
+    cursor = match.end;
+  }
+
+  if (cursor < value.length) appendLinkedText(parent, value.slice(cursor), currentFormulaId, manualLinks);
+}
+
 function linkedEl(tag, className, text, currentFormulaId, manualLinks = []) {
   const node = el(tag, className);
-  appendLinkedText(node, text || "", currentFormulaId, manualLinks);
+  appendRichText(node, text || "", currentFormulaId, manualLinks);
   return node;
 }
 
