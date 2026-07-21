@@ -219,25 +219,34 @@ function appendLinkedText(parent, text, currentFormulaId, manualLinks = []) {
   if (cursor < text.length) parent.append(document.createTextNode(text.slice(cursor)));
 }
 
-const INLINE_MATH_PATTERN = /[^\p{Script=Cyrillic};:,.—]+(?:[=^_{}∂∇ΣΔδφλμηθξ‖≤≥≈₀-₉⁽⁾ᵀ][^\p{Script=Cyrillic};:,.—]*)+/gu;
+const INLINE_MATH_PATTERN = /(?:[A-Za-zΔδφλμηθξε](?:\^\{[^}]+\}|_\{[^}]+\}|_[A-Za-z0-9]+|[A-Za-z0-9\\{}()\s])*:=\s*[^;\n,.—]+|\|[A-Za-z]\|\s*(?:<|>|=|≤|≥|≈|≠)\s*\d+(?:\.\d+)?|\b(?:[JLIpO]|tanh|logistic|sign|argmax|mode)\([^)]*\)|(?:\d+(?:\.\d+)?|[A-Za-zΔδφλμηθξε])\s*(?:<|>|=|≤|≥|≈|≠)\s*(?:\d+(?:\.\d+)?|[A-Za-zΔδφλμηθξε])(?:\s*(?:<|>|=|≤|≥|≈|≠)\s*(?:\d+(?:\.\d+)?|[A-Za-zΔδφλμηθξε]))?|[+\-−]?\d*\.?\d+(?:e[+\-−]?\d+)?[Δδφλμηθξε]|(?<![\p{L}\p{N}_])[ΣΔδφλμηθξε](?![\p{L}\p{N}_])|[^\p{Script=Cyrillic};:,.—]+(?:[\\=^_{}∂∇ΣΔδφλμηθξε‖≤≥≈≠∈×±∞₀-₉¹²³⁽⁾ᵀ][^\p{Script=Cyrillic};:,.—]*)+)/gu;
 
 function normalizeInlineLatex(text) {
   return text
     .trim()
     .replace(/−/g, "-")
     .replace(/∗/g, "\\ast")
-    .replace(/∂/g, "\\partial")
-    .replace(/∇/g, "\\nabla")
-    .replace(/Σ/g, "\\sum")
-    .replace(/Δ/g, "\\Delta")
-    .replace(/δ/g, "\\delta")
-    .replace(/φ/g, "\\phi")
-    .replace(/λ/g, "\\lambda")
-    .replace(/η/g, "\\eta")
-    .replace(/θ/g, "\\theta")
-    .replace(/μ/g, "\\mu")
-    .replace(/σ/g, "\\sigma")
-    .replace(/ξ/g, "\\xi")
+    .replace(/∂/g, "\\partial ")
+    .replace(/∇/g, "\\nabla ")
+    .replace(/Σ/g, "\\sum ")
+    .replace(/Δ/g, "\\Delta ")
+    .replace(/δ/g, "\\delta ")
+    .replace(/φ/g, "\\phi ")
+    .replace(/λ/g, "\\lambda ")
+    .replace(/η/g, "\\eta ")
+    .replace(/θ/g, "\\theta ")
+    .replace(/μ/g, "\\mu ")
+    .replace(/σ/g, "\\sigma ")
+    .replace(/ξ/g, "\\xi ")
+    .replace(/ε/g, "\\varepsilon ")
+    .replace(/\|([^|]+)\|/g, "\\lvert $1 \\rvert")
+    .replace(/≤/g, "\\le")
+    .replace(/≥/g, "\\ge")
+    .replace(/≠/g, "\\ne")
+    .replace(/∈/g, "\\in")
+    .replace(/×/g, "\\times")
+    .replace(/±/g, "\\pm")
+    .replace(/∞/g, "\\infty")
     .replace(/‖([^‖]+)‖₂/g, "\\lVert $1 \\rVert_2")
     .replace(/‖([^‖]+)‖\^2/g, "\\lVert $1 \\rVert^2")
     .replace(/‖([^‖]+)‖/g, "\\lVert $1 \\rVert")
@@ -251,6 +260,9 @@ function normalizeInlineLatex(text) {
     .replace(/₇/g, "_7")
     .replace(/₈/g, "_8")
     .replace(/₉/g, "_9")
+    .replace(/¹/g, "^1")
+    .replace(/²/g, "^2")
+    .replace(/³/g, "^3")
     .replace(/ᵀ/g, "^T")
     .replace(/⁽ⁱ⁾/g, "^{(i)}")
     .replace(/⁽ʲ⁾/g, "^{(j)}")
@@ -267,7 +279,7 @@ function collectInlineMath(text) {
     const start = match.index || 0;
     const trimmedStart = start + raw.search(/\S/);
     const trimmed = raw.trim();
-    if (!trimmed || trimmed.length < 2) continue;
+    if (!trimmed || (trimmed.length < 2 && !/^[ΣΔδφλμηθξε]$/.test(trimmed))) continue;
     if (/^[-+*/()[\]{}|\s]+$/.test(trimmed)) continue;
     matches.push({
       start: trimmedStart,
@@ -283,6 +295,9 @@ function collectInlineMath(text) {
     if (previous && gap === ":" && match.latex.startsWith("=")) {
       previous.end = match.end;
       previous.latex = previous.latex + " :=" + match.latex.slice(1);
+    } else if (previous && gap === "" && /^(?:=|\\ne|\\le|\\ge|\\approx|\\in|<|>)/.test(match.latex)) {
+      previous.end = match.end;
+      previous.latex = previous.latex + " " + match.latex;
     } else {
       merged.push(match);
     }
